@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "auto-screenshooter"
+version = "0.1.0"
+description = ""
+authors = ["Kovas Palunas <kovas.palunas@gmail.com>"]
+license = "MPL-2.0"
+packages = [
+    { include = "auto_screenshooter", from = "src" }
+]
+
+[tool.poetry.scripts]
+auto-screenshooter = "auto_screenshooter.main:main"
+
+[tool.poetry.dependencies]
+python = ">=3.7"
+google-auth-oauthlib = "^0.4.3"
+click = "^7.1.2"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.790"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
