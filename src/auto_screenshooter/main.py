@@ -5,12 +5,19 @@ import subprocess
 import time
 from time import sleep
 import logging
+import sys
 
 import click
 
+from google.auth.exceptions import TransportError
 from . import photos_api
 
-logger = logging.getLogger(__name__)
+# Log all messages to stdout.
+root = logging.getLogger()
+root.setLevel(logging.DEBUG)
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.DEBUG)
+root.addHandler(handler)
 
 DATA_DIR = os.path.expanduser('~/auto_screenshooter_data/')
 DATE_PATTERN = '%Y-%m-%d'
@@ -36,7 +43,7 @@ def make_video(input_img_pattern, output_fname='output.mp4'):
 def main(make_video: bool):
 
     session = photos_api.get_authorized_session(
-        os.path.join(DATA_DIR, '.auto_screenshooter_cred'))
+        os.path.join(DATA_DIR, 'auto_screenshooter_cred.json'))
 
     if not os.path.exists(DATA_DIR):
         os.makedirs(DATA_DIR)
@@ -73,7 +80,13 @@ def main(make_video: bool):
                  '-o',  # Overwrite existing files (if program was restarted).
                  ])
             i += 1
-            photos_api.upload_photos(session, [filename], 'Auto Screenshots')
+            try:
+                photos_api.upload_photos(session, [filename], 'Auto Screenshots')
+            except TransportError:
+                # Rebuild the session and try again.
+                session = photos_api.get_authorized_session(
+                    os.path.join(DATA_DIR, '.auto_screenshooter_cred'))
+                photos_api.upload_photos(session, [filename], 'Auto Screenshots')
             if not make_video:
                 i = 0
         time.sleep(10 * 60)
