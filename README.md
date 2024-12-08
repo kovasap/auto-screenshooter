@@ -22,3 +22,7 @@ Make sure you have Python 3.7+ and `poetry` installed, then install with
 `poetry install`.
 
 To run, simply execute `auto-screenshooter`.
+
+# Windows Alternative
+
+See https://github.com/kovasap/dotfiles?tab=readme-ov-file#automatic-screenshooting.
